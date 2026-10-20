@@ -140,7 +140,7 @@ function render(r) {
   $("#windows").innerHTML = r.windows.length ? r.windows.map((w, i) => `
     <div class="win"><span>${days[i] || w.date}</span>
       <b>${fmtHour(w.best.from)} – ${fmtHour(w.best.to.slice(0, 11) + String(+w.best.to.slice(11, 13) + 1).padStart(2, "0"))}</b>
-      <span>PM2.5 ≈ ${Math.round(w.best.pm25)} (${bandOf(w.best.pm25)[lang]}) · ${t("worst")} ${fmtHour(w.worst.t)}: ${Math.round(w.worst.pm25)}</span></div>`).join("") : `<p class="sub">${t("none")}</p>`;
+      <span>PM2.5 ≈ ${Math.round(w.best.pm25)} (${bandOf(w.best.pm25)[lang]})${w.worst ? ` · ${t("worst")} ${fmtHour(w.worst.t)}: ${Math.round(w.worst.pm25)}` : ""}</span></div>`).join("") : `<p class="sub">${t("none")}</p>`;
   renderMap(r);
   renderForecast(r);
 }

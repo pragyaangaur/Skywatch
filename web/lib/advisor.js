@@ -30,12 +30,10 @@ export function placeIn(q) {
 const pct = (x) => (x == null ? null : Math.round(100 * x));
 const hhmm = (t) => t.slice(11, 16);
 
-// A day's cleanest window, and its worst hour when that hour is clearly worse and not part of the window.
+// A day's cleanest window and, when report.js found one, the hour to avoid.
 function windowFacts(w) {
-  const from = hhmm(w.best.from), to = `${String(+w.best.to.slice(11, 13) + 1).padStart(2, "0")}:00`;
-  const worstH = +w.worst.t.slice(11, 13), fromH = +from.slice(0, 2), toH = +to.slice(0, 2);
-  const clear = (worstH < fromH - 1 || worstH > toH) && w.worst.pm25 > 1.15 * w.best.pm25;
-  return { from, to, pm: Math.round(w.best.pm25), worst: clear ? hhmm(w.worst.t) : null, worstPm: Math.round(w.worst.pm25) };
+  const to = `${String(+w.best.to.slice(11, 13) + 1).padStart(2, "0")}:00`;
+  return { from: hhmm(w.best.from), to, pm: Math.round(w.best.pm25), worst: w.worst ? hhmm(w.worst.t) : null, worstPm: w.worst ? Math.round(w.worst.pm25) : null };
 }
 
 // The numbers an answer may use, in a flat form that both the templates and the model read.

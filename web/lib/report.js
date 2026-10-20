@@ -71,8 +71,12 @@ function windows(aq) {
       const m = (hrs[i].pm25 + hrs[i + 1].pm25) / 2;
       if (!best || m < best.pm25) best = { from: hrs[i].t, to: hrs[i + 1].t, pm25: m };
     }
-    let worst = hrs.reduce((w, h) => (h.pm25 > w.pm25 ? h : w));
-    out.push({ date: d, best: { ...best, band: band(best.pm25).name }, worst: { t: worst.t, pm25: worst.pm25, band: band(worst.pm25).name } });
+    // The hour to avoid must lie clear of the cleanest window and be clearly worse than it.
+    const b0 = +best.from.slice(11, 13), b1 = +best.to.slice(11, 13);
+    const away = hrs.filter((h) => { const hr = +h.t.slice(11, 13); return hr < b0 - 1 || hr > b1 + 1; });
+    const w = away.length ? away.reduce((x, h) => (h.pm25 > x.pm25 ? h : x)) : null;
+    const worst = w && w.pm25 > 1.15 * best.pm25 ? { t: w.t, pm25: w.pm25, band: band(w.pm25).name } : null;
+    out.push({ date: d, best: { ...best, band: band(best.pm25).name }, worst });
   }
   return out.slice(0, 2);
 }
