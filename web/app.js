@@ -1,6 +1,6 @@
 import { report } from "./lib/report.js";
 import { geocode } from "./lib/data.js";
-import { templateAnswer, modelMessages, grounded, placeIn } from "./lib/advisor.js";
+import { templateAnswer, modelMessages, acceptOpener, placeIn, isHindi } from "./lib/advisor.js";
 import { Helper, supported } from "./lib/helper.js";
 
 const $ = (s) => document.querySelector(s);
@@ -33,13 +33,12 @@ const T = {
   worst: { en: "Worst around", hi: "सबसे खराब लगभग" },
   none: { en: "No daylight hours left today.", hi: "आज दिन के घंटे बाकी नहीं।" },
   thinking: { en: "Checking the numbers…", hi: "आँकड़े देखे जा रहे हैं…" },
-  aiOff: { en: "Answers come from fixed templates. Turn on the on-device AI for more natural replies. It runs in your browser, so your questions never leave this device. The first load downloads about 1 GB.", hi: "जवाब तय टेम्पलेट से आते हैं। ज़्यादा स्वाभाविक जवाबों के लिए डिवाइस पर चलने वाला AI चालू करें। यह आपके ब्राउज़र में चलता है, इसलिए आपके सवाल इस डिवाइस से बाहर नहीं जाते। पहली बार लगभग 1 GB डाउनलोड होगा।" },
+  aiOff: { en: "Answers come from fixed templates. Turn on the on-device AI for more natural replies to English questions. It runs in your browser, so your questions never leave this device. The first load downloads about 1 GB.", hi: "जवाब तय टेम्पलेट से आते हैं। ज़्यादा स्वाभाविक जवाबों के लिए डिवाइस पर चलने वाला AI चालू करें। यह आपके ब्राउज़र में चलता है, इसलिए आपके सवाल इस डिवाइस से बाहर नहीं जाते। पहली बार लगभग 1 GB डाउनलोड होगा।" },
   aiBtn: { en: "Turn on on-device AI", hi: "डिवाइस AI चालू करें" },
   aiLoading: { en: "Loading the on-device model", hi: "डिवाइस मॉडल लोड हो रहा है" },
-  aiOn: { en: "On-device AI is on. Numbers are checked against SkyWatch's data before they are shown.", hi: "डिवाइस AI चालू है। दिखाने से पहले हर आँकड़ा SkyWatch के डेटा से मिलाया जाता है।" },
+  aiOn: { en: "On-device AI is on for English questions. It writes the opening of each answer, and the numbers always come from SkyWatch's data.", hi: "डिवाइस AI अंग्रेज़ी सवालों के लिए चालू है। हिंदी सवालों के जवाब हिंदी टेम्पलेट से आते हैं, क्योंकि इतने छोटे मॉडल अच्छी हिंदी नहीं लिखते।" },
   aiNoGpu: { en: "This browser has no WebGPU, so the on-device AI cannot run here. Template answers still work.", hi: "इस ब्राउज़र में WebGPU नहीं है, इसलिए डिवाइस AI यहाँ नहीं चल सकता। टेम्पलेट जवाब काम करते रहेंगे।" },
   aiFail: { en: "The model did not load. Template answers still work.", hi: "मॉडल लोड नहीं हुआ। टेम्पलेट जवाब काम करते रहेंगे।" },
-  basis: { en: "From SkyWatch's data", hi: "SkyWatch के डेटा से" },
   chips: {
     en: ["Can my kids play outside this evening?", "When should I go for a morning walk tomorrow?", "Do I need a mask today?", "How much of this smoke is from stubble burning?"],
     hi: ["क्या बच्चे आज शाम बाहर खेल सकते हैं?", "कल सुबह टहलने का सबसे अच्छा समय क्या है?", "क्या आज मास्क पहनना चाहिए?", "इस धुएँ में पराली का कितना हिस्सा है?"],
@@ -276,7 +275,7 @@ $("#aibtn").onclick = async () => {
 async function askQ(q) {
   const div = document.createElement("div");
   div.className = "qa";
-  div.innerHTML = `<div class="q"></div><div class="a"></div><div class="basis" hidden></div>`;
+  div.innerHTML = `<div class="q"></div><div class="a"></div>`;
   div.querySelector(".q").textContent = q;
   const a = div.querySelector(".a");
   a.textContent = t("thinking");
@@ -291,22 +290,17 @@ async function askQ(q) {
     }
     if (!r) r = await report(+(+current.lat).toFixed(2), +(+current.lon).toFixed(2), current.place);
     const plain = templateAnswer(q, r);
-    if (!helper.ready) {
+    if (!helper.ready || isHindi(q)) {
       a.textContent = plain;
       return;
     }
+    // The model writes a natural first sentence and the checked facts follow it.
     let text = "";
     for await (const piece of helper.answer(modelMessages(q, r))) {
       text += piece;
-      a.textContent = text;
+      a.textContent = `${text}\n\n${plain}`;
     }
-    // A reply with a number that is not in SkyWatch's data is not shown.
-    if (!text.trim() || !grounded(text, q, r)) a.textContent = plain;
-    else {
-      const b = div.querySelector(".basis");
-      b.hidden = false;
-      b.textContent = `${t("basis")}: ${plain}`;
-    }
+    a.textContent = acceptOpener(text, q, r) ? `${text.trim()} ${plain}` : plain;
   } catch {
     a.textContent = t("failed");
   }

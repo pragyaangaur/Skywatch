@@ -54,7 +54,7 @@ export class Helper {
 
   // Yields the reply as it is written.
   async *answer(messages) {
-    const chunks = await this.engine.chat.completions.create({ messages, stream: true, temperature: 0.3, max_tokens: 220 });
+    const chunks = await this.engine.chat.completions.create({ messages, stream: true, temperature: 0.4, max_tokens: 60 });
     for await (const c of chunks) {
       const d = c.choices[0]?.delta?.content;
       if (d) yield d;

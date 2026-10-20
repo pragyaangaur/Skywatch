@@ -66,7 +66,6 @@ h3 { margin: 28px 0 6px; }
 .qa { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; margin-top: 10px; }
 .qa .q { font-weight: 600; margin-bottom: 6px; }
 .qa .a { white-space: pre-wrap; line-height: 1.5; }
-.qa .basis { margin-top: 8px; font-size: 13px; color: var(--muted); line-height: 1.45; }
 .ai { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
 .ai .note { margin: 0; flex: 1; min-width: 240px; }
 .ai progress { width: 180px; accent-color: var(--accent); }

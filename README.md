@@ -13,7 +13,9 @@ You pick a place (search, map link or your location) and SkyWatch shows four thi
 3. **Cleanest time outside.** The cleanest two daylight hours today and tomorrow, and the worst hour to avoid.
 4. **Where the air came from.** A map with the 48 hour back-trajectories of the air reaching you and the fires that fed it, sized by how much of your smoke each one supplied.
 
-You can also ask a question in Hindi or English, such as "can my kids play outside this evening?" or "लखनऊ में हवा कैसी है?". SkyWatch answers from the same numbers, using a template for the kind of question asked. You can turn on an optional language model that runs inside your own browser (Qwen 2.5 through WebLLM and WebGPU) to get more natural replies. The model is downloaded once, about 1 GB, or 400 MB with `?ai=small`. Your questions never leave the device. Every number in a model reply is checked against SkyWatch's data, and a reply with a number that is not in the data is replaced by the template answer.
+You can also ask a question in Hindi or English, such as "can my kids play outside this evening?" or "लखनऊ में कल सुबह टहलना ठीक रहेगा?". SkyWatch finds the place named in the question and the part of the day it asks about. It then reaches a verdict from those hours and answers with a template that carries the numbers.
+
+You can turn on an optional language model that runs inside your own browser (Qwen 2.5 through WebLLM and WebGPU), and your questions never leave the device. The model is downloaded once. It is about 1 GB, or 400 MB with `?ai=small`. Models small enough to run in a browser lose numbers and write poor Hindi, so the model only writes the opening sentence of an English answer, in which it puts SkyWatch's verdict into natural words. The facts after it always come from the template. An opening sentence that contains a number or contradicts the verdict is dropped. Hindi questions are always answered by the Hindi template.
 
 ## How the smoke share is computed
 
