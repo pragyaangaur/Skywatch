@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SkyWatch · Where is your smoke coming from?</title>
+<meta name="description" content="Live farm-fire smoke attribution and clean-air advice for North India. Open source.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌫️</text></svg>">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="logo">Sky</span><span class="name">Watch</span></div>
+  <p class="tag" data-en="Where is your smoke coming from, and when is the air cleanest?" data-hi="आपका धुआँ कहाँ से आ रहा है, और हवा कब सबसे साफ़ है?"></p>
+  <button id="lang" class="ghost" aria-label="Switch language">हिंदी</button>
+</header>
+
+<main>
+  <section class="search">
+    <form id="sf">
+      <input id="q" type="search" autocomplete="off" placeholder="Search a city, e.g. Delhi, Lucknow, Ludhiana" aria-label="City">
+      <button type="submit" data-en="Check" data-hi="देखें"></button>
+      <button type="button" id="geo" class="ghost" data-en="Use my location" data-hi="मेरी जगह"></button>
+    </form>
+    <ul id="sugg" class="sugg" hidden></ul>
+  </section>
+
+  <p id="status" class="status" role="status"></p>
+
+  <section id="cards" class="cards" hidden>
+    <article class="card big" id="aqcard">
+      <h2 data-en="Air now" data-hi="अभी की हवा"></h2>
+      <div class="hero"><span id="pm"></span><span class="unit">µg/m³ PM2.5, 24 h avg</span></div>
+      <div id="bandchip" class="chip"></div>
+      <p id="pmnow" class="sub"></p>
+    </article>
+    <article class="card big" id="firecard">
+      <h2 data-en="From farm fires" data-hi="पराली के धुएँ से"></h2>
+      <div class="hero"><span id="share"></span><span class="unit" data-en="of PM2.5, last 24 h" data-hi="PM2.5 का हिस्सा, पिछले 24 घंटे"></span></div>
+      <p id="sharenext" class="sub"></p>
+      <p id="firecount" class="sub"></p>
+    </article>
+    <article class="card big" id="wincard">
+      <h2 data-en="Cleanest time outside" data-hi="बाहर जाने का सबसे साफ़ समय"></h2>
+      <div id="windows"></div>
+    </article>
+  </section>
+
+  <section id="mapwrap" hidden>
+    <h3 data-en="Where today's air came from" data-hi="आज की हवा कहाँ से आई"></h3>
+    <p class="note" data-en="Lines trace the air arriving at your city back 48 hours. Orange dots are fires seen by NASA's VIIRS satellite in the last 2 days; bigger means more of your smoke." data-hi="रेखाएँ आपके शहर पहुँचने वाली हवा का पिछले 48 घंटे का रास्ता दिखाती हैं। नारंगी बिंदु पिछले 2 दिनों में NASA उपग्रह से दिखी आग हैं; बड़ा बिंदु यानी आपके धुएँ में ज़्यादा हिस्सा।"></p>
+    <div id="map"></div>
+  </section>
+
+  <section id="chartwrap" hidden>
+    <h3 data-en="PM2.5 for the next 48 hours" data-hi="अगले 48 घंटे का PM2.5"></h3>
+    <div id="chart" class="chart"></div>
+  </section>
+
+  <section id="askwrap" class="ask">
+    <h3 data-en="Ask SkyWatch" data-hi="SkyWatch से पूछें"></h3>
+    <div class="ai"><button type="button" id="aibtn" class="ghost"></button><progress id="aibar" max="1" value="0" hidden></progress><p id="aistate" class="note"></p></div>
+    <div id="chips" class="qchips"></div>
+    <form id="af">
+      <input id="aq" autocomplete="off" placeholder="Can my kids play outside this evening?" aria-label="Question">
+      <button type="submit" data-en="Ask" data-hi="पूछें"></button>
+    </form>
+    <div id="answers"></div>
+  </section>
+
+  <section id="how" class="how">
+    <h3 data-en="How it works, and does it work?" data-hi="यह कैसे काम करता है, और क्या यह सही है?"></h3>
+    <div id="howtext"></div>
+    <div id="btchart" class="chart"></div>
+    <div id="bttable"></div>
+  </section>
+</main>
+
+<footer>
+  <p>Data: NASA FIRMS VIIRS active fires · CAMS air-quality forecast and 925 hPa winds via Open-Meteo · OpenAQ archive of the US Embassy New Delhi monitor. Health guidance follows the CPCB National AQI. Not medical advice.</p>
+  <p>Everything runs in your browser. The optional AI is Qwen 2.5 running on your device through WebLLM. Open source (MIT). Built for <a href="https://codeforindia.org/hackathon">Code for a Billion 2026</a>.</p>
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script type="module" src="app.js"></script>
+</body>
+</html>
