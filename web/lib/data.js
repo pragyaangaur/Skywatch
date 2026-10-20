@@ -96,7 +96,9 @@ export function airQuality(lat, lon) {
 }
 
 export async function geocode(name) {
-  const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(name)}&count=5&countryCode=IN&language=en`;
+  // Hindi names only match when the search itself is in Hindi.
+  const lang = /[\u0900-\u097F]/.test(name) ? "hi" : "en";
+  const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(name)}&count=5&countryCode=IN&language=${lang}`;
   const r = await getJSON(url);
   return (r.results || []).map((p) => ({ name: p.name, admin: p.admin1 || "", lat: p.latitude, lon: p.longitude }));
 }
