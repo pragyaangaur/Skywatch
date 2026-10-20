@@ -1,0 +1,6 @@
+science/data/raw/
+web/data/
+node_modules/
+.env*
+__pycache__/
+.DS_Store

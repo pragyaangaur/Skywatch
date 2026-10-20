@@ -1,0 +1,14 @@
+{
+  "name": "skywatch",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "description": "Farm-fire smoke attribution and clean-air advice for North India, running entirely in the browser.",
+  "license": "MIT",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "live": "node scripts/build-live.mjs",
+    "dev": "node scripts/dev.js",
+    "test": "node --test test/*.test.js"
+  }
+}
