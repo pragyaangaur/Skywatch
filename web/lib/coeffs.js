@@ -1,0 +1,2 @@
+// Written by science/backtest.py. Do not edit by hand.
+export default {"c": 0.19712136111257375, "S0": 50.0, "ci95": [0.13953818139870863, 0.24707682215821677]};
